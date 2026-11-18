@@ -15,22 +15,23 @@ in
     git
     just
     nixfmt
-    prettier
+    oxfmt
     shfmt
     shellcheck
     statix
-    taplo
   ];
 
   git-hooks.hooks = {
     nixfmt.enable = true;
     statix.enable = true;
     deadnix.enable = true;
-    prettier = {
+    oxfmt = {
       enable = true;
-      files = "\\.(md|json|ya?ml)$";
+      name = "Oxfmt";
+      entry = "${lib.getExe pkgs.oxfmt} --write";
+      files = "\\.(md|json|ya?ml|toml)$";
+      types = [ "file" ];
     };
-    taplo.enable = true;
     shfmt = {
       enable = true;
       files = bashFiles;
