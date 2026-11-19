@@ -21,6 +21,11 @@ in
     statix
   ];
 
+  languages.python = {
+    enable = true;
+    uv.enable = true;
+  };
+
   git-hooks.hooks = {
     nixfmt.enable = true;
     statix.enable = true;
