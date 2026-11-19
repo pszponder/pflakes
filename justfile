@@ -1,30 +1,32 @@
 set shell := ["bash", "-eu", "-o", "pipefail", "-c"]
 
-# Include tracked and untracked files, respecting .gitignore.
-nix_files := "'*.nix'"
-bash_files := "'*.sh' '*.bash'"
-
 # List available recipes
 default:
     @just --list
 
+# Smoke-test local Helium; add --launch to open a test window
+[arg("launch", long, value="--launch")]
+test-helium launch="":
+    @bash scripts/test-helium.sh {{quote(launch)}}
+
+# Update all custom package pins
+update: update-helium
+
+# Check upstream and smoke-test Helium before updating its release pin
+update-helium:
+    @bash scripts/update-helium.sh
+
 # Format supported files
 fmt:
-    git ls-files --cached --others --exclude-standard -z -- {{ nix_files }} | xargs -0 -r nixfmt
-    oxfmt
-    git ls-files --cached --others --exclude-standard -z -- {{ bash_files }} | xargs -0 -r shfmt -ln bash -s -w
+    bash scripts/format.sh
 
 # Check formatting without changing files
 fmt-check:
-    git ls-files --cached --others --exclude-standard -z -- {{ nix_files }} | xargs -0 -r nixfmt --check
-    oxfmt --check
-    git ls-files --cached --others --exclude-standard -z -- {{ bash_files }} | xargs -0 -r shfmt -ln bash -s -d
+    bash scripts/format.sh --check
 
 # Lint Nix and Bash files
 lint:
-    statix check .
-    git ls-files --cached --others --exclude-standard -z -- {{ nix_files }} | xargs -0 -r deadnix --fail
-    git ls-files --cached --others --exclude-standard -z -- {{ bash_files }} | xargs -0 -r shellcheck --shell=bash
+    bash scripts/lint.sh
 
 # Evaluate the development environment and run its formatting and lint checks
 check:
