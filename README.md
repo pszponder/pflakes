@@ -1,6 +1,6 @@
 # Piotr's Nix Flakes
 
-This repo contains my custom Nix flakes. Each program has its own flake and lock file under `flakes/<program>/`.
+This repo contains my custom Nix flakes. Use the root flake as a single `pflakes` input in NixOS. It exports named modules such as `nixosModules.helium` and packages such as `packages.x86_64-linux.helium`. Each program also has a standalone flake under `flakes/<program>/`.
 
 - [Helium Browser](flakes/helium/README.md)
 

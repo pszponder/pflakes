@@ -22,11 +22,11 @@ After the version check passes, the recipe opens the local build with a fresh te
 
 Once the Helium flake is on the default branch of `pszponder/pflakes`, make these edits in your `nixconfig` checkout.
 
-1. In `flake.nix`, add this entry inside the existing `inputs` block. The `dir` selects the Helium flake, and `follows` reuses your system’s Nixpkgs pin.
+1. In `flake.nix`, add this entry inside the existing `inputs` block. The collection shares your system’s Nixpkgs pin.
 
    ```nix
-   helium = {
-     url = "github:pszponder/pflakes?dir=flakes/helium";
+   pflakes = {
+     url = "github:pszponder/pflakes";
      inputs.nixpkgs.follows = "nixpkgs";
    };
    ```
@@ -36,7 +36,7 @@ Once the Helium flake is on the default branch of `pszponder/pflakes`, make thes
    ```nix
    modules = [
      self.modules.nixos.tpx1
-     inputs.helium.nixosModules.default
+     inputs.pflakes.nixosModules.helium
    ];
    ```
 
@@ -54,7 +54,7 @@ Once the Helium flake is on the default branch of `pszponder/pflakes`, make thes
    helium --version
    ```
 
-Commit `flake.nix`, `flake.lock`, and the host module together in `nixconfig`. Launch Helium from the application menu or run `helium`. To try the package directly from the published flake, run `nix run 'github:pszponder/pflakes?dir=flakes/helium'`.
+Commit `flake.nix`, `flake.lock`, and the host module together in `nixconfig`. Launch Helium from the application menu or run `helium`. To try the package directly from the published flake, run `nix run 'github:pszponder/pflakes#helium'`.
 
 ## Updates
 
@@ -63,7 +63,7 @@ Run `just update-helium` from `pflakes` to check upstream locally. It uses the s
 The [daily GitHub workflow](../../README.md#set-up-github-actions) tracks the Linux binary release tag and updates the pin in `pflakes`. Your system uses the revision recorded in `nixconfig/flake.lock`. To install a published update, run these commands from `nixconfig`, then commit the updated lock file.
 
 ```sh
-nix flake update helium
+nix flake update pflakes
 just switch tpx1
 helium --version
 ```
