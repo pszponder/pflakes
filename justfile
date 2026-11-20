@@ -9,12 +9,21 @@ default:
 test-helium launch="":
     @bash scripts/test-helium.sh {{quote(launch)}}
 
+# Smoke-test local Zen Browser; add --launch to open a test window
+[arg("launch", long, value="--launch")]
+test-zen-browser launch="":
+    @bash scripts/test-zen-browser.sh {{quote(launch)}}
+
 # Update all custom package pins
-update: update-helium
+update: update-helium update-zen-browser
 
 # Check upstream and smoke-test Helium before updating its release pin
 update-helium:
     @bash scripts/update-helium.sh
+
+# Refresh the Zen packaging pin and smoke-test both flake outputs
+update-zen-browser:
+    @bash scripts/update-zen-browser.sh
 
 # Format supported files
 fmt:

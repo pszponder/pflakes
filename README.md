@@ -3,6 +3,7 @@
 This repo contains my custom Nix flakes. Use the root flake as a single `pflakes` input in NixOS. It exports named modules such as `nixosModules.helium` and packages such as `packages.x86_64-linux.helium`. Each program also has a standalone flake under `flakes/<program>/`.
 
 - [Helium Browser](flakes/helium/README.md)
+- [Zen Browser](flakes/zen-browser/README.md)
 
 ## Set up GitHub Actions
 
@@ -12,6 +13,8 @@ This repo contains my custom Nix flakes. Use the root flake as a single `pflakes
 4. Go to **Actions → Update Helium → Run workflow**, select the default branch, and start a run. Open the run log. When the release pin is current, the release check succeeds and the build and commit steps are skipped. On an update, the workflow builds the x86-64 package, runs `helium --version`, and commits the new pin.
 
 The daily check is scheduled for **06:17 UTC**. Follow the [Helium update instructions](flakes/helium/README.md#updates) to pick up the new pin in nixconfig.
+
+Zen has a separate [Update Zen Browser workflow](.github/workflows/update-zen-browser.yml) scheduled for **06:47 UTC**. It uses the same Actions permissions and supports manual runs. See the [Zen update instructions](flakes/zen-browser/README.md#update-zen).
 
 ## Development
 
@@ -23,8 +26,9 @@ Formatting uses Nixfmt for Nix, Oxfmt for Markdown/JSON/YAML/TOML, and shfmt for
 - `just fmt-check` checks formatting without changing files.
 - `just lint` runs Statix, Deadnix, and ShellCheck.
 - `just validate` runs `devenv test`, which checks formatting and linting.
-- `just update` updates the custom package pins locally. Currently it runs `just update-helium`.
+- `just update` updates the custom package pins locally. Run `just update-helium` or `just update-zen-browser` to update one browser.
 - `just test-helium` checks the local Helium launcher and reports the result. Add `--launch` to open a browser window with a temporary profile.
+- `just test-zen-browser` checks the standalone and collection Zen launchers. Add `--launch` to open Zen with a temporary profile.
 - `just ok` formats files, then runs validation.
 
 The file checks include tracked and untracked files and respect `.gitignore`.

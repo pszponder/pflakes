@@ -1,0 +1,45 @@
+name: Update Zen Browser
+on:
+  schedule:
+    - cron: "47 6 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency: update-browser-pins
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09
+        with:
+          ref: ${{ github.event.repository.default_branch }}
+
+      - uses: cachix/install-nix-action@3dc140bfc76c49fbd4dd958429132e3746bcb086
+
+      - name: Refresh the Zen packaging pin
+        id: pin
+        run: |
+          nix flake update zen-packaging --flake ./flakes/zen-browser
+          nix flake update zen-browser
+          if ! git diff --quiet -- flake.lock flakes/zen-browser/flake.lock; then
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Smoke-test both x86-64 launchers
+        if: steps.pin.outputs.changed == 'true'
+        run: |
+          nix run --no-update-lock-file ./flakes/zen-browser -- --version
+          nix run --no-update-lock-file .#zen-browser -- --version
+
+      - name: Commit the verified pins
+        if: steps.pin.outputs.changed == 'true'
+        run: |
+          version=$(nix eval --raw .#zen-browser.version)
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add flake.lock flakes/zen-browser/flake.lock
+          git commit -m "zen-browser: refresh packaging for $version"
+          git push

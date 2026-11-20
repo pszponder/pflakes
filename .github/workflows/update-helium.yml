@@ -7,7 +7,7 @@ on:
 permissions:
   contents: write
 
-concurrency: update-helium
+concurrency: update-browser-pins
 
 jobs:
   update:
