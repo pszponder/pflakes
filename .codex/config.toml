@@ -2,3 +2,6 @@
 command = "devenv"
 args = ["--quiet", "shell", "--", "uvx", "mcp-nixos==3.0.2"]
 startup_timeout_sec = 120
+
+[mcp_servers.nixos.tools.nix]
+approval_mode = "approve"
