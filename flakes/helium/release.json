@@ -1,8 +1,8 @@
 {
-  "tag": "0.22.2.1",
-  "version": "0.22.2.1",
+  "tag": "0.22.4.1",
+  "version": "0.22.4.1",
   "sha256": {
-    "amd64": "f405ded557483d4cae6080f8ecfb0653efc81a304728f4f0bd120e09e2e591f1",
-    "arm64": "da79e5a08962f95bf591ef4e7bc162cb9da38cfd8442dc3d50982d24fd9be196"
+    "amd64": "efcbd3a9242c697b34b79396c52297038d3b9f42fedb790ea4b4be9ff11bb8a9",
+    "arm64": "3e73bdcd5305b5dac904a217e92dae1b84d9888a987dbebe5df46e2d584354db"
   }
 }
