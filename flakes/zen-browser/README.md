@@ -1,6 +1,6 @@
 # Zen Browser
 
-This flake packages the official Zen Browser Beta for x86_64-linux and aarch64-linux using the [community packaging](https://github.com/0xc000022070/zen-browser-flake). Its lock file pins the package recipe and release. The NixOS module builds with the host's nixpkgs and requires no Home Manager setup.
+This flake packages official Zen Browser Beta releases for x86_64-linux and aarch64-linux directly from [zen-browser/desktop](https://github.com/zen-browser/desktop/releases). The local `package.nix` handles NixOS integration; `release.json` pins official download URLs and checksums. The NixOS module uses the host's nixpkgs and requires no Home Manager setup.
 
 ## Use in nixconfig
 
@@ -23,6 +23,6 @@ nix run path:./flakes/zen-browser
 
 ## Update Zen
 
-The [Update Zen Browser workflow](../../.github/workflows/update-zen-browser.yml) runs daily at 06:47 UTC and supports manual runs. When the community packaging pin changes, it tests both x86-64 launchers and commits the verified lock files.
+The [Update Zen Browser workflow](../../.github/workflows/update-zen-browser.yml) runs daily at 06:47 UTC and supports manual runs. When the official release changes, it tests both x86-64 launchers and commits the verified release metadata.
 
-Run `just update-zen-browser` locally to refresh both pins and test the candidate before writing the lock files.
+Run `just update-zen-browser` locally to fetch the latest official release and test the candidate before writing `release.json`.

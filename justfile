@@ -21,7 +21,7 @@ update: update-helium update-zen-browser
 update-helium:
     @bash scripts/update-helium.sh
 
-# Refresh the Zen packaging pin and smoke-test both flake outputs
+# Refresh the official Zen release pin and smoke-test both flake outputs
 update-zen-browser:
     @bash scripts/update-zen-browser.sh
 

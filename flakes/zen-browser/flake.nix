@@ -3,16 +3,12 @@
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
-    zen-packaging = {
-      url = "github:0xc000022070/zen-browser-flake";
-      flake = false;
-    };
   };
 
   outputs =
-    { nixpkgs, zen-packaging, ... }:
+    { nixpkgs, ... }:
     let
-      zenBrowser = pkgs: (import zen-packaging { inherit pkgs; }).beta;
+      zenBrowser = pkgs: pkgs.callPackage ./package.nix { };
     in
     {
       packages = nixpkgs.lib.genAttrs [ "x86_64-linux" "aarch64-linux" ] (system: rec {
