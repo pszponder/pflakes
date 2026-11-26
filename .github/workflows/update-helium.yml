@@ -31,7 +31,7 @@ jobs:
             echo "changed=true" >> "$GITHUB_OUTPUT"
           fi
 
-      - uses: cachix/install-nix-action@3dc140bfc76c49fbd4dd958429132e3746bcb086
+      - uses: cachix/install-nix-action@382a9ed9481c7c1f94f68b72ef105b3417c73877
         if: steps.release.outputs.changed == 'true'
 
       - name: Build and smoke-test the new x86-64 package
