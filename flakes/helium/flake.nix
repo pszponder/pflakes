@@ -18,6 +18,7 @@
         ...
       }:
       {
+        imports = [ ./preferences.nix ];
         options.programs.helium.enable = lib.mkEnableOption "the Helium browser";
         options.programs.helium.policies = lib.mkOption {
           type = lib.types.attrsOf (pkgs.formats.json { }).type;
