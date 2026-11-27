@@ -26,6 +26,30 @@
           description = "Managed browser policies. Policies in the Chromium directory also apply to other browsers using that directory.";
         };
         config = lib.mkIf config.programs.helium.enable {
+          programs.helium.policies =
+            let
+              engine = name: shortcut: url: { inherit name shortcut url; };
+            in
+            {
+              RestoreOnStartup = lib.mkDefault 1;
+              SiteSearchSettings = lib.mkDefault [
+                (engine "YouTube" "yt" "https://www.youtube.com/results?search_query={searchTerms}")
+                (engine "Amazon" "amazon" "https://www.amazon.com/s?k={searchTerms}")
+                (engine "eBay" "ebay" "https://www.ebay.com/sch/i.html?_nkw={searchTerms}")
+              ];
+            };
+
+          programs.helium.preferences = {
+            verticalLayout = lib.mkDefault true;
+            frameless = lib.mkDefault true;
+            expandTabsOnHover = lib.mkDefault true;
+            # Catppuccin lavender in Latte and Mocha.
+            accentColors = lib.mkDefault {
+              light = "7287fd";
+              dark = "b4befe";
+            };
+          };
+
           environment.systemPackages = [ (pkgs.callPackage ./package.nix { }) ];
           environment.etc = lib.mkIf (config.programs.helium.policies != { }) (
             lib.genAttrs
