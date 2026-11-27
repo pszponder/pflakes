@@ -7,7 +7,9 @@ echo "PASS: The local Helium launcher printed its version."
 if [[ ${1:-} == --launch ]]; then
 	profile=$(mktemp -d -t helium-test.XXXXXXXX)
 	trap 'rm -rf -- "$profile"' EXIT
-	echo "Opening chrome://version with test profile $profile. Close Helium to finish."
-	nix run path:./flakes/helium -- --user-data-dir="$profile" chrome://version
+	nix run path:./flakes/helium#seed-test-profile -- "$profile"
+	profile_dir="$profile/net.imput.helium"
+	echo "Opening chrome://version with test profile $profile_dir. Close Helium to finish."
+	nix run path:./flakes/helium#test-launch -- --user-data-dir="$profile_dir" chrome://version
 	echo "PASS: Helium exited successfully."
 fi

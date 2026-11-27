@@ -79,7 +79,7 @@ in
           }')
         ''}
         jq -s --argjson prefs ${lib.escapeShellArg (builtins.toJSON settings)} --argjson theme "$theme" \
-          '(.[0] // {}) * $prefs * $theme' "$source" > "$temp"
+          '(.[0] // {}) * $prefs * $theme | .helium.completed_onboarding = true' "$source" > "$temp"
         mv "$temp" Preferences
       '';
     };

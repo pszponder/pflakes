@@ -16,7 +16,7 @@ To check the browser window as well, run this in a desktop session.
 just test-helium --launch
 ```
 
-After the version check passes, the recipe opens the local build with a fresh temporary profile. On the version page, check **Executable Path** for the Nix store build and **Profile Path** for the test profile. Close Helium to finish the test and remove the temporary profile.
+After the version check passes, the recipe opens the local build with a temporary profile initialized with the NixOS module’s default preferences, including vertical tabs, zen mode, and the light or dark accent color. Helium skips first-run setup. The test window loads the module’s policies in a private mount namespace, uses Google for address-bar searches, and downloads Bitwarden through Helium’s extension service. Visit `chrome://extensions` to check the install. On the version page, check **Executable Path** for the Nix store build and **Profile Path** for the test profile. Close Helium to finish the test and remove the temporary profile.
 
 ## Install in nixconfig
 

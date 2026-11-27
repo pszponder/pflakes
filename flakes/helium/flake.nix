@@ -2,12 +2,52 @@
   description = "Helium browser for NixOS";
   inputs.nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
 
-  outputs = { nixpkgs, ... }: {
+  outputs = { self, nixpkgs, ... }: {
     # Each Linux architecture has its own upstream Debian package and checksum.
     packages = nixpkgs.lib.genAttrs [ "x86_64-linux" "aarch64-linux" ] (system: rec {
       helium = nixpkgs.legacyPackages.${system}.callPackage ./package.nix { };
       default = helium;
     });
+
+    apps = nixpkgs.lib.genAttrs [ "x86_64-linux" "aarch64-linux" ] (
+      system:
+      let
+        pkgs = nixpkgs.legacyPackages.${system};
+        host = nixpkgs.lib.nixosSystem {
+          inherit system;
+          modules = [
+            self.nixosModules.default
+            { programs.helium.enable = true; }
+          ];
+        };
+        service = host.config.systemd.user.services.helium-preferences;
+        seed = pkgs.writeShellScript "helium-test-preferences" ''
+          export XDG_CONFIG_HOME="''${1:?expected a temporary configuration directory}"
+          export PATH=${nixpkgs.lib.makeBinPath service.path}:$PATH
+          export XDG_DATA_DIRS=${service.environment.XDG_DATA_DIRS}
+          ${service.script}
+        '';
+        testPolicies = pkgs.writeTextDir "helium-nixos.json" (
+          builtins.toJSON host.config.programs.helium.policies
+        );
+        testLaunch = pkgs.writeShellScript "helium-test-launch" ''
+          exec ${pkgs.bubblewrap}/bin/bwrap --dev-bind / / \
+            --overlay-src /etc --tmp-overlay /etc \
+            --ro-bind ${testPolicies} /etc/chromium/policies/managed \
+            ${self.packages.${system}.helium}/bin/helium "$@"
+        '';
+      in
+      {
+        test-launch = {
+          type = "app";
+          program = toString testLaunch;
+        };
+        seed-test-profile = {
+          type = "app";
+          program = toString seed;
+        };
+      }
+    );
 
     # Build with the host's package set when imported into a NixOS configuration.
     nixosModules.default =
@@ -32,10 +72,17 @@
             in
             {
               RestoreOnStartup = lib.mkDefault 1;
-              ExtensionInstallForcelist = lib.mkDefault [
-                # Bitwarden Password Manager from the Chrome Web Store.
-                "nngceckbapebfimnlniiiahkandclblb;https://clients2.google.com/service/update2/crx"
-              ];
+              DefaultSearchProviderEnabled = lib.mkDefault true;
+              DefaultSearchProviderName = lib.mkDefault "Google";
+              DefaultSearchProviderSearchURL = lib.mkDefault "https://www.google.com/search?q={searchTerms}";
+              ExtensionSettings = lib.mkDefault {
+                nngceckbapebfimnlniiiahkandclblb = {
+                  installation_mode = "force_installed";
+                  toolbar_pin = "force_pinned";
+                  update_url = "https://services.helium.imput.net/ext/";
+                  override_update_url = true;
+                };
+              };
               SiteSearchSettings = lib.mkDefault [
                 (engine "YouTube" "yt" "https://www.youtube.com/results?search_query={searchTerms}")
                 (engine "Amazon" "amazon" "https://www.amazon.com/s?k={searchTerms}")
