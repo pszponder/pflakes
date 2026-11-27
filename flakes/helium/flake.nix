@@ -19,8 +19,23 @@
       }:
       {
         options.programs.helium.enable = lib.mkEnableOption "the Helium browser";
+        options.programs.helium.policies = lib.mkOption {
+          type = lib.types.attrsOf (pkgs.formats.json { }).type;
+          default = { };
+          description = "Managed browser policies. Policies in the Chromium directory also apply to other browsers using that directory.";
+        };
         config = lib.mkIf config.programs.helium.enable {
           environment.systemPackages = [ (pkgs.callPackage ./package.nix { }) ];
+          environment.etc = lib.mkIf (config.programs.helium.policies != { }) (
+            lib.genAttrs
+              [
+                "chromium/policies/managed/helium-nixos.json"
+                "helium/policies/managed/helium-nixos.json"
+              ]
+              (_: {
+                text = builtins.toJSON config.programs.helium.policies;
+              })
+          );
         };
       };
   };
