@@ -32,6 +32,10 @@
             in
             {
               RestoreOnStartup = lib.mkDefault 1;
+              ExtensionInstallForcelist = lib.mkDefault [
+                # Bitwarden Password Manager from the Chrome Web Store.
+                "nngceckbapebfimnlniiiahkandclblb;https://clients2.google.com/service/update2/crx"
+              ];
               SiteSearchSettings = lib.mkDefault [
                 (engine "YouTube" "yt" "https://www.youtube.com/results?search_query={searchTerms}")
                 (engine "Amazon" "amazon" "https://www.amazon.com/s?k={searchTerms}")
