@@ -73,7 +73,10 @@ in
           if [ "$(gsettings get org.gnome.desktop.interface color-scheme)" = "'prefer-dark'" ]; then
             hex=${colors.dark}
           fi
-          theme=$(jq -n --argjson color "$((0xff$hex - 0x100000000))" '{browser:{theme:{is_grayscale2:false,user_color2:$color}}}')
+          theme=$(jq -n --argjson color "$((0xff$hex - 0x100000000))" '{
+            extensions: {theme: {id: "user_color_theme_id"}},
+            browser: {theme: {is_grayscale2: false, user_color2: $color}}
+          }')
         ''}
         jq -s --argjson prefs ${lib.escapeShellArg (builtins.toJSON settings)} --argjson theme "$theme" \
           '(.[0] // {}) * $prefs * $theme' "$source" > "$temp"
