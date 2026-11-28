@@ -76,9 +76,16 @@
               DefaultSearchProviderName = lib.mkDefault "Google";
               DefaultSearchProviderSearchURL = lib.mkDefault "https://www.google.com/search?q={searchTerms}";
               ExtensionSettings = lib.mkDefault {
+                # Bitwarden Password Manager
                 nngceckbapebfimnlniiiahkandclblb = {
                   installation_mode = "force_installed";
                   toolbar_pin = "force_pinned";
+                  update_url = "https://services.helium.imput.net/ext/";
+                  override_update_url = true;
+                };
+                # Enhancer for YouTube
+                ponfpcnoihfmfllpaingbgckeeldkhle = {
+                  installation_mode = "force_installed";
                   update_url = "https://services.helium.imput.net/ext/";
                   override_update_url = true;
                 };
